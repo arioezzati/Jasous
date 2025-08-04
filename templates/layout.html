@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بازی جاسوس | Spy Game PRO</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="background" id="star-bg"></div>
+    <div class="page-wrapper">
+        <div class="main-container">
+            {% block content %}{% endblock %}
+        </div>
+
+        <div class="copyright">
+            Made by Ario Ezzativiand - © 2025
+        </div>
+    </div>
+    
+    <script>
+        // JAVASCRIPT IS IDENTICAL TO THE PREVIOUS VERSION, NO CHANGES NEEDED HERE.
+        document.addEventListener('DOMContentLoaded', () => {
+            const starBg = document.getElementById('star-bg');
+            if (starBg) for (let i = 0; i < 100; i++) {
+                const star = document.createElement('div');
+                star.className = 'star'; const size = Math.random() * 2;
+                star.style.width = `${size}px`; star.style.height = `${size}px`;
+                star.style.top = `${Math.random() * 100}%`; star.style.left = `${Math.random() * 100}%`;
+                star.style.animationDelay = `${Math.random() * 5}s`; star.style.animationDuration = `${Math.random() * 3 + 2}s`;
+                starBg.appendChild(star);
+            }
+
+            const numPlayersInput = document.getElementById('num_players');
+            const namesContainer = document.getElementById('player-names-container');
+            
+            const updateNameInputs = () => {
+                if (!namesContainer || !numPlayersInput) return;
+                const count = parseInt(numPlayersInput.value, 10) || 0;
+                namesContainer.innerHTML = '';
+                for (let i = 1; i <= count; i++) {
+                    const nameInputWrapper = document.createElement('div');
+                    nameInputWrapper.className = 'player-name-input-wrapper';
+                    nameInputWrapper.innerHTML = `
+                        <span class="player-number">بازیکن ${i}</span>
+                        <input type="text" name="player_names" placeholder="نام..." required>
+                    `;
+                    namesContainer.appendChild(nameInputWrapper);
+                }
+            };
+
+            if (numPlayersInput) {
+                numPlayersInput.addEventListener('input', updateNameInputs);
+                updateNameInputs();
+            }
+
+            const gameModeRadios = document.querySelectorAll('input[name="game_mode"]');
+            const timeOptionsWrapper = document.getElementById('time-options-wrapper');
+            if(timeOptionsWrapper) gameModeRadios.forEach(radio => radio.addEventListener('change', () => {timeOptionsWrapper.style.display = radio.value === 'timed' ? 'block' : 'none'}));
+
+            const cardFlipper = document.getElementById('card-flipper');
+            const gotItButton = document.getElementById('got-it-button');
+            const flipAction = () => { if(cardFlipper) { cardFlipper.classList.add('is-flipped'); if (gotItButton) gotItButton.style.display = 'inline-block'; } };
+            if (cardFlipper) cardFlipper.addEventListener('click', flipAction);
+            
+            if (gotItButton) gotItButton.addEventListener('click', e => {
+                e.stopPropagation();
+                fetch('/api/next_turn', { method: 'POST' }).then(() => {
+                    document.body.style.transition = 'opacity 0.5s'; document.body.style.opacity = '0';
+                    setTimeout(() => { window.location.href = '/game'; }, 500);
+                });
+            });
+            
+            const timerContainer = document.getElementById('timer-container');
+            if (timerContainer) {
+                const display = document.getElementById('timer-display');
+                const pauseBtn = document.getElementById('pause-resume-btn');
+                const endBtn = document.getElementById('end-game-btn');
+                const hourglassIcon = document.querySelector('.timer-icon');
+
+                let duration = parseInt(timerContainer.dataset.timeLimit, 10);
+                let timerInterval = null;
+                let isPaused = false;
+
+                function tick() {
+                    if (isPaused) return;
+                    const minutes = String(Math.floor(duration / 60)).padStart(2, '0');
+                    const seconds = String(duration % 60).padStart(2, '0');
+                    display.textContent = `${minutes}:${seconds}`;
+                    if (--duration < 0) {
+                        clearInterval(timerInterval);
+                        timerContainer.innerHTML = `<h1>وقت تمام شد!</h1><p>جاسوس را پیدا کردید؟</p><a href="/" class="btn btn-secondary">شروع یک بازی جدید</a>`;
+                    }
+                }
+                function togglePause() {
+                    isPaused = !isPaused;
+                    pauseBtn.textContent = isPaused ? 'ادامه' : 'توقف';
+                    pauseBtn.classList.toggle('btn-danger', isPaused);
+                    pauseBtn.classList.toggle('btn-secondary', !isPaused);
+                    hourglassIcon.classList.toggle('paused', isPaused);
+                }
+                pauseBtn.addEventListener('click', togglePause);
+                endBtn.addEventListener('click', () => { window.location.href = '/'; });
+                timerInterval = setInterval(tick, 1000);
+                tick();
+            }
+        });
+    </script>
+</body>
+</html>
