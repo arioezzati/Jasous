@@ -1,0 +1,43 @@
+{% extends "layout.html" %}
+{% block content %}
+
+{% if page_type == 'card_reveal' %}
+<div class="game-card">
+    <div class="turn-info">نوبت {{ player_name }}</div>
+    <div id="card-flipper">
+        <div id="card-inner">
+            <div class="card-face card-front">
+                <h2>آماده‌ای، {{ player_name }}؟</h2>
+                <p>برای دیدن نقشت، روی کارت کلیک کن</p>
+            </div>
+            <div class="card-face card-back {% if is_spy %}is-spy-card{% else %}is-citizen-card{% endif %}">
+                {{ role_icon|safe }}
+                <h3 id="role-word" class="{% if is_spy %}is-spy{% endif %}">{{ role }}</h3>
+            </div>
+        </div>
+    </div>
+    <div class="button-wrapper">
+        <button id="got-it-button" class="btn btn-secondary" style="display: none;">متوجه شدم (نفر بعدی)</button>
+    </div>
+</div>
+
+{% elif page_type == 'timer' %}
+<div id="timer-container" data-time-limit="{{ time_limit }}" class="timer-container">
+    {{ hourglass_svg|safe }}
+    <div id="timer-display">--:--</div>
+    <h2>بازی شروع شد! جاسوس را پیدا کنید!</h2>
+    <div class="timer-buttons-wrapper">
+        <button id="pause-resume-btn" class="btn btn-secondary">توقف</button>
+        <button id="end-game-btn" class="btn btn-danger">پایان بازی</button>
+    </div>
+</div>
+
+{% elif page_type == 'final_message' %}
+<div class="game-card" id="final-message">
+    <h1>بازی شروع شد!</h1>
+    <p>جاسوس را در میان خودتان پیدا کنید!</p>
+    <a href="{{ url_for('setup_page') }}" class="btn btn-secondary">شروع یک بازی جدید</a>
+</div>
+{% endif %}
+
+{% endblock %}
