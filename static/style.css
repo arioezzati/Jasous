@@ -1,0 +1,298 @@
+@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700;800&display=swap');
+:root { 
+    --bg-color: #0d0f18; 
+    --primary-glow: #7f5af0; 
+    --secondary-glow: #2cb67d; 
+    --text-color: #fffffe; 
+    --card-bg: rgba(23, 26, 41, 0.5); 
+    --card-border: rgba(127, 90, 240, 0.5); 
+    --card-shadow: rgba(0, 0, 0, 0.5); 
+    --spy-color: #ff4d4d; 
+    --citizen-color: #2cb67d;
+    --danger-glow: #e74c3c;
+}
+* { 
+    margin: 0; 
+    padding: 0; 
+    box-sizing: border-box; 
+}
+html, body { 
+    height: 100%; 
+}
+body {
+    font-family: 'Vazirmatn', sans-serif; 
+    display: flex;
+    flex-direction: column;
+    color: var(--text-color); 
+    background-color: var(--bg-color);
+    overflow-y: auto;
+}
+.background { 
+    position: fixed; 
+    top: 0; 
+    left: 0; 
+    width: 100%; 
+    height: 100%; 
+    z-index: -1; 
+}
+.star { 
+    position: absolute; 
+    background-color: white; 
+    border-radius: 50%; 
+    animation: twinkle 5s infinite; 
+}
+@keyframes twinkle { 
+    0% { opacity: 0; } 
+    50% { opacity: 1; } 
+    100% { opacity: 0; } 
+}
+
+.page-wrapper {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    width: 100%;
+    padding: 2rem 1rem;
+    justify-content: center;
+    align-items: center;
+}
+
+.main-container {
+    position: relative; 
+    z-index: 1; 
+    width: 100%; 
+    max-width: 480px; 
+    background: var(--card-bg); 
+    border-radius: 24px; 
+    border: 1px solid var(--card-border); 
+    padding: clamp(1.5rem, 5vw, 2.5rem); 
+    backdrop-filter: blur(12px); 
+    -webkit-backdrop-filter: blur(12px); 
+    box-shadow: 0 8px 40px 0 var(--card-shadow); 
+    text-align: center;
+}
+h1 { 
+    font-weight: 800; 
+    font-size: clamp(2rem, 6vw, 2.8rem); 
+    background: linear-gradient(90deg, var(--primary-glow), var(--secondary-glow)); 
+    -webkit-background-clip: text; 
+    -webkit-text-fill-color: transparent; 
+    margin-bottom: 1.5rem; 
+}
+fieldset { 
+    border: 1px solid var(--card-border); 
+    border-radius: 12px; 
+    padding: 1rem; 
+    margin-bottom: 1.5rem; 
+    text-align:right; 
+}
+legend { 
+    padding: 0 0.5rem; 
+    font-weight: 700; 
+}
+.form-group { 
+    margin-bottom: 1.5rem; 
+    text-align: right; 
+}
+input[type="number"], input[type="text"] { 
+    width: 100%; 
+    padding: 0.8rem 1rem; 
+    background: rgba(0,0,0,0.3); 
+    border: 1px solid var(--card-border); 
+    border-radius: 12px; 
+    color: var(--text-color); 
+    font-family: inherit; 
+    font-size: 1.1rem; 
+}
+#player-names-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+.player-name-input-wrapper {
+    display: flex;
+    align-items: center;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    overflow: hidden;
+}
+.player-name-input-wrapper .player-number {
+    padding: 0.8rem 1rem;
+    font-weight: 700;
+    background: rgba(0,0,0,0.2);
+    border-left: 1px solid var(--card-border);
+}
+.player-name-input-wrapper input[type="text"] {
+    flex-grow: 1;
+    border: none;
+    background: transparent;
+    border-radius: 0;
+}
+
+.checkbox-grid, .radio-grid { 
+    display: grid; 
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); 
+    gap: 0.75rem; 
+}
+.input-group { 
+    display: flex; 
+    align-items: center; 
+    background: rgba(0,0,0,0.2); 
+    padding: 0.6rem; 
+    border-radius: 8px; 
+}
+input[type="checkbox"], input[type="radio"] { 
+    width: 1.2em; 
+    height: 1.2em; 
+    margin-left: 0.7rem; 
+    accent-color: var(--primary-glow); 
+}
+.btn { 
+    padding: 1rem; 
+    border: none; 
+    border-radius: 12px; 
+    font-size: 1.2rem; 
+    font-family: inherit; 
+    font-weight: 700; 
+    cursor: pointer; 
+    transition: all 0.3s ease; 
+    text-decoration: none; 
+    color: white; 
+    box-sizing: border-box; 
+    background: linear-gradient(90deg, var(--primary-glow), var(--secondary-glow)); 
+    box-shadow: 0 4px 20px 0 rgba(127, 90, 240, 0.4); 
+}
+.btn:hover { 
+    transform: translateY(-3px) scale(1.05); 
+}
+.btn-secondary { 
+    background: #4a4e69; 
+}
+.btn-danger {
+    background: linear-gradient(90deg, #c0392b, var(--danger-glow));
+    box-shadow: 0 4px 20px 0 rgba(231, 76, 60, 0.4);
+}
+.game-card, .timer-container { 
+    min-height: 400px; 
+    display: flex; 
+    flex-direction: column; 
+    justify-content: center; 
+    align-items: center; 
+}
+.turn-info { 
+    font-size: clamp(1.5rem, 4vw, 2rem); 
+    font-weight: 700; 
+    margin-bottom: 2rem; 
+}
+#card-flipper { 
+    width: 100%; 
+    max-width: 300px; 
+    height: 250px; 
+    perspective: 1500px; 
+    cursor: pointer; 
+}
+#card-inner { 
+    position: relative; 
+    width: 100%; 
+    height: 100%; 
+    transition: transform 0.8s; 
+    transform-style: preserve-3d; 
+}
+#card-flipper.is-flipped #card-inner { 
+    transform: rotateY(180deg); 
+}
+.card-face { 
+    position: absolute; 
+    width: 100%; 
+    height: 100%; 
+    -webkit-backface-visibility: hidden; 
+    backface-visibility: hidden; 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    flex-direction: column; 
+    padding: 1.5rem; 
+    border-radius: 20px; 
+    background: var(--card-bg); 
+    border: 1px solid var(--card-border); 
+}
+.card-back { 
+    transform: rotateY(180deg); 
+}
+.role-icon { 
+    width: 80px; 
+    height: 80px; 
+    margin-bottom: 1rem; 
+}
+.is-citizen-card .role-icon, #role-word { 
+    color: var(--citizen-color); 
+}
+.is-spy-card .role-icon, #role-word.is-spy { 
+    color: var(--spy-color); 
+}
+#role-word { 
+    font-size: clamp(2rem, 6vw, 3rem); 
+    font-weight: 800; 
+    word-break: break-word; 
+}
+.button-wrapper { 
+    width: 100%; 
+    margin-top: 2rem; 
+}
+.timer-buttons-wrapper {
+    display: flex;
+    gap: 1rem;
+    width: 100%;
+    margin-top: 1.5rem;
+}
+.rematch-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
+    margin-top: 2rem;
+}
+
+.timer-buttons-wrapper .btn {
+    flex: 1;
+}
+.timer-icon { 
+    width: 80px; 
+    height: 80px; 
+    color: var(--primary-glow); 
+    animation: spin 4s linear infinite; 
+}
+.timer-icon.paused {
+    animation-play-state: paused;
+}
+@keyframes spin { 
+    from { transform: rotate(0deg); } 
+    to { transform: rotate(360deg); } 
+}
+.timer-icon .sand { 
+    animation: sand-flow 4s linear infinite; 
+    transform-origin: bottom; 
+}
+.timer-icon.paused .sand {
+    animation-play-state: paused;
+}
+@keyframes sand-flow { 
+    0%, 100% { transform: scaleY(1); } 
+    50% { transform: scaleY(0); } 
+}
+#timer-display { 
+    font-size: clamp(3rem, 10vw, 5rem); 
+    font-weight: 800; 
+    margin: 1rem 0;
+    letter-spacing: 4px; 
+}
+.copyright {
+    padding-top: 1rem;
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 0.9rem;
+    font-family: monospace;
+    text-align: center;
+    width: 100%;
+    margin-top: auto;
+}

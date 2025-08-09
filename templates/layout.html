@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بازی جاسوس | Spy Game PRO</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="background" id="star-bg"></div>
+    <div class="page-wrapper">
+        <div class="main-container">
+            {% block content %}{% endblock %}
+        </div>
+        <div class="copyright">
+            Made by Ario Ezzativiand - &copy; 2025
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Background Stars Logic
+            const starBg = document.getElementById('star-bg');
+            if (starBg) for (let i = 0; i < 100; i++) {
+                const star = document.createElement('div');
+                star.className = 'star'; const size = Math.random() * 2;
+                star.style.width = `${size}px`; star.style.height = `${size}px`;
+                star.style.top = `${Math.random() * 100}%`; star.style.left = `${Math.random() * 100}%`;
+                star.style.animationDelay = `${Math.random() * 5}s`; star.style.animationDuration = `${Math.random() * 3 + 2}s`;
+                starBg.appendChild(star);
+            }
+
+            // Setup Page: Player Names Logic
+            const numPlayersInput = document.getElementById('num_players');
+            const namesContainer = document.getElementById('player-names-container');
+            const updateNameInputs = () => {
+                if (!namesContainer || !numPlayersInput) return;
+                const count = parseInt(numPlayersInput.value, 10) || 0;
+                namesContainer.innerHTML = '';
+                for (let i = 1; i <= count; i++) {
+                    const nameInputWrapper = document.createElement('div');
+                    nameInputWrapper.className = 'player-name-input-wrapper';
+                    nameInputWrapper.innerHTML = `<span class="player-number">بازیکن ${i}</span><input type="text" name="player_names" placeholder="نام..." required>`;
+                    namesContainer.appendChild(nameInputWrapper);
+                }
+            };
+            if (numPlayersInput) {
+                numPlayersInput.addEventListener('input', updateNameInputs);
+                updateNameInputs();
+            }
+
+            // Setup Page: Timed Mode Logic
+            const gameModeRadios = document.querySelectorAll('input[name="game_mode"]');
+            const timeOptionsWrapper = document.getElementById('time-options-wrapper');
+            if(timeOptionsWrapper) gameModeRadios.forEach(radio => radio.addEventListener('change', () => {timeOptionsWrapper.style.display = radio.value === 'timed' ? 'block' : 'none'}));
+
+            // Game Page: Card Flip Logic
+            const cardFlipper = document.getElementById('card-flipper');
+            const gotItButton = document.getElementById('got-it-button');
+            const flipAction = () => { if(cardFlipper) { cardFlipper.classList.add('is-flipped'); if (gotItButton) gotItButton.style.display = 'inline-block'; } };
+            if (cardFlipper) cardFlipper.addEventListener('click', flipAction);
+            if (gotItButton) gotItButton.addEventListener('click', e => {
+                e.stopPropagation();
+                fetch('/api/next_turn', { method: 'POST' }).then(() => {
+                    document.body.style.transition = 'opacity 0.5s'; document.body.style.opacity = '0';
+                    setTimeout(() => { window.location.href = '/game'; }, 500);
+                });
+            });
+            
+            // Game Page: Timer Logic (REVISED AND FULLY CORRECTED)
+            const timerContainer = document.getElementById('timer-container');
+            if (timerContainer) {
+                const display = document.getElementById('timer-display');
+                const pauseBtn = document.getElementById('pause-btn');
+                const resumeBtn = document.getElementById('resume-btn');
+                const pauseMenu = document.getElementById('pause-menu');
+                const hourglassIcon = document.querySelector('.timer-icon');
+
+                let duration = parseInt(timerContainer.dataset.timeLimit, 10);
+                let isPaused = false;
+                let timerInterval;
+
+                const tick = () => {
+                    if (isPaused) return;
+
+                    const minutes = String(Math.floor(duration / 60)).padStart(2, '0');
+                    const seconds = String(duration % 60).padStart(2, '0');
+                    display.textContent = `${minutes}:${seconds}`;
+
+                    if (duration-- <= 0) {
+                        clearInterval(timerInterval);
+                        window.location.href = '/timesup';
+                    }
+                };
+                
+                if (pauseBtn) {
+                    pauseBtn.addEventListener('click', () => {
+                        isPaused = true;
+                        hourglassIcon.classList.add('paused');
+                        pauseBtn.style.display = 'none';
+                        if (pauseMenu) pauseMenu.style.display = 'flex';
+                    });
+                }
+
+                if (resumeBtn) {
+                    resumeBtn.addEventListener('click', () => {
+                        isPaused = false;
+                        hourglassIcon.classList.remove('paused');
+                        if (pauseBtn) pauseBtn.style.display = 'block';
+                        if (pauseMenu) pauseMenu.style.display = 'none';
+                    });
+                }
+                
+                // This will now correctly start the timer
+                tick(); // Call once immediately to show start time
+                timerInterval = setInterval(tick, 1000);
+            }
+        });
+    </script>
+</body>
+</html>

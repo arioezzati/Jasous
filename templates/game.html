@@ -1,0 +1,61 @@
+{% extends "layout.html" %}
+{% block content %}
+
+{% if page_type == 'card_reveal' %}
+<div class="game-card">
+    <div class="turn-info">نوبت {{ player_name }}</div>
+    <div id="card-flipper">
+        <div id="card-inner">
+            <div class="card-face card-front">
+                <h2>آماده‌ای، {{ player_name }}؟</h2>
+                <p>برای دیدن نقشت، روی کارت کلیک کن</p>
+            </div>
+            <div class="card-face card-back {% if is_spy %}is-spy-card{% else %}is-citizen-card{% endif %}">
+                {{ role_icon|safe }}
+                <h3 id="role-word" class="{% if is_spy %}is-spy{% endif %}">{{ role }}</h3>
+            </div>
+        </div>
+    </div>
+    <div class="button-wrapper">
+        <button id="got-it-button" class="btn btn-secondary" style="display: none;">متوجه شدم (نفر بعدی)</button>
+    </div>
+</div>
+
+{% elif page_type == 'final_screen' %}
+    {% if game_mode == 'timed' %}
+    <div id="timer-container" data-time-limit="{{ time_limit }}" class="timer-container">
+        {{ hourglass_svg|safe }}
+        <div id="timer-display">--:--</div>
+        <h2>بازی شروع شد! جاسوس را پیدا کنید!</h2>
+        <div id="action-buttons" class="timer-buttons-wrapper">
+            <button id="pause-btn" class="btn btn-secondary">توقف</button>
+            <div id="pause-menu" class="pause-menu-wrapper" style="display: none;">
+                <button id="resume-btn" class="btn">ادامه</button>
+                <a href="{{ url_for('rematch_game') }}" class="btn btn-secondary">بریم دور بعد</a>
+                <a href="{{ url_for('setup_page') }}" class="btn btn-danger">پایان و بازی جدید</a>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="game-card" id="final-message">
+        <h1>بازی شروع شد!</h1>
+        <p>جاسوس را در میان خودتان پیدا کنید!</p>
+        <div class="rematch-wrapper">
+            <a href="{{ url_for('rematch_game') }}" class="btn">بریم دور بعد</a>
+            <a href="{{ url_for('setup_page') }}" class="btn btn-danger">پایان و بازی جدید</a>
+        </div>
+    </div>
+    {% endif %}
+
+{% elif page_type == 'times_up' %}
+<div class="game-card" id="final-message">
+    <h1>وقت تمام شد!</h1>
+    <p>آیا موفق به پیدا کردن جاسوس شدید؟</p>
+    <div class="rematch-wrapper">
+        <a href="{{ url_for('rematch_game') }}" class="btn">بریم دور بعد</a>
+        <a href="{{ url_for('setup_page') }}" class="btn btn-danger">پایان و بازی جدید</a>
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}
